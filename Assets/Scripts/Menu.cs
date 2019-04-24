@@ -5,7 +5,7 @@ using TMPro;
 using Valve.VR;
 
 public abstract class Menu : MonoBehaviour
-{    
+{
     private float preUd = 0, preLr = 0;
 
     [SerializeField]
@@ -18,7 +18,7 @@ public abstract class Menu : MonoBehaviour
     [SerializeField]
     protected int lineSize;
     [SerializeField]
-    protected TextMeshPro title, text; 
+    protected TextMeshPro title, text;
     [SerializeField]
     protected Menu prePanel;
     [SerializeField]
@@ -38,7 +38,13 @@ public abstract class Menu : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { 
+    {
+        if (InputVive.right.vertical.ChangePositive() || InputVive.right.vertical.ChangeNegative())
+        {
+            selecter.localPosition += new Vector3(0, 0, height * InputVive.right.vertical.Value);
+            selectLine -= (int)Mathf.Sign(InputVive.right.vertical.Value);
+        }
+
         if (SteamVR_Input._default.inActions.Teleport.GetStateDown(SteamVR_Input_Sources.RightHand))
         {
             var posi = SteamVR_Input._default.inActions.TrackPosi.GetAxis(SteamVR_Input_Sources.RightHand);
@@ -53,7 +59,7 @@ public abstract class Menu : MonoBehaviour
             }
             else if (lrFlag && Mathf.Abs(posi.x) > 0.5)//値の変更
             {
-                ChangeValue((int)Mathf.Sign(posi.x));                    
+                ChangeValue((int)Mathf.Sign(posi.x));
             }
             else//決定時
             {
