@@ -7,7 +7,7 @@ public class MoveManager : MonoBehaviour
     [SerializeField]
     private float mvSpeed, modelWidth;
     [SerializeField]
-    private Transform player, hmd_rig,  box;
+    private Transform player, hmd_rig, box;
     private Transform hmd_cam;
     private Vector3 ang;
     private Vector3 prePosi;
@@ -20,7 +20,7 @@ public class MoveManager : MonoBehaviour
     void Start()
     {
         if (player.GetComponent<Rigidbody>() == null) Debug.LogError("player does not have rigidbody");
-        foreach (Transform child in hmd_rig)        
+        foreach (Transform child in hmd_rig)
             if (child.GetComponent<Camera>() != null)
                 hmd_cam = child;
 
@@ -71,26 +71,26 @@ public class MoveManager : MonoBehaviour
         ang = (new Quaternion(-xx, -zz, -yy, ww) * Quaternion.Euler(90f, 0, 0)).eulerAngles;
     }
 
-    public void HeightReset()
-    {
-        var temp = Player.instance.transform.position.y + 1.35f - mycamera.position.y;
-        transform.position += Vector3.up * temp;
-    }
+    // public void HeightReset()
+    // {
+    //     var temp = Player.instance.transform.position.y + 1.35f - mycamera.position.y;
+    //     transform.position += Vector3.up * temp;
+    // }
 
-    public void WidthReset()
-    {
-        var newlength = Vector3.Distance(leftHand.position, rightHand.position);
-        if (newlength > 0)
-            length = newlength;
-        transform.localScale *= lengthHandToHand / length;
-        Debug.Log("length: " + newlength);
-    }
+    // public void WidthReset()
+    // {
+    //     var newlength = Vector3.Distance(leftHand.position, rightHand.position);
+    //     if (newlength > 0)
+    //         length = newlength;
+    //     transform.localScale *= lengthHandToHand / length;
+    //     Debug.Log("length: " + newlength);
+    // }
 
-    public void ResetRot()
-    {
-        var dir = userCamera.mycamera.transform.forward;
-        dir.y = 0;
-        transform.forward = dir;
-        dirOffset = Controller.AccelData().x - transform.eulerAngles.y;
-    }
+    // public void ResetRot()
+    // {
+    //     var dir = userCamera.mycamera.transform.forward;
+    //     dir.y = 0;
+    //     transform.forward = dir;
+    //     dirOffset = Controller.AccelData().x - transform.eulerAngles.y;
+    // }
 }
