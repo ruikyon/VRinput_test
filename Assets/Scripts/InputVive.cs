@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Valve.VR;
 
 public class InputVive : MonoBehaviour
 {
     public static Controller left, right;
     private static InputVive instance;
+    public static int LastUpdate { get; private set; }
     private Action updateCallback;
+
+    private SteamVR_Action_Boolean menu = SteamVR_Actions._default.Menu;
+    private SteamVR_Action_Vector2 track = SteamVR_Actions._default.TrackPosi;
+    private SteamVR_Action_Vibration haptic = SteamVR_Actions._default.Haptic;
 
     private void Start()
     {
@@ -21,24 +27,29 @@ public class InputVive : MonoBehaviour
         instance = this;
 
         //以下要変更
-        Func<bool>[] temp1 = {
+        Func<bool>[] tempL = {
             ()=>false,
             ()=>false,
             ()=>false
         };
-        left = new Controller(this, temp1);
+        left = new Controller(this, tempL);
 
-        Func<bool>[] temp2 = {
+        Func<bool>[] tempR = {
             ()=>false,
             ()=>false,
             ()=>false
         };
-        right = new Controller(this, temp2);
+        right = new Controller(this, tempR);
     }
 
     private void LateUpdate()
     {
         updateCallback();
+    }
+
+    public static void AddCallBack(Action value)
+    {
+        instance.updateCallback += value;
     }
 
     public class Controller
@@ -48,69 +59,34 @@ public class InputVive : MonoBehaviour
 
         public Controller(InputVive parent, Func<bool>[] funcs)
         {
-            trigger = new Bottun(parent, funcs[0]);
-            menu = new Bottun(parent, funcs[1]);
-            trackpad = new Bottun(parent, funcs[2]);
+            trigger = new Bottun(funcs[0]);
+            menu = new Bottun(funcs[1]);
+            trackpad = new Bottun(funcs[2]);
         }
 
-        public class Bottun
+        public class Bottun : InputTemplate<bool>
         {
-            public bool State { get; private set; }
-            private bool preState;
-
-            public Bottun(InputVive parent, Func<bool> update)
-            {
-                parent.updateCallback += () =>
-                {
-                    preState = State;
-                    State = update();
-                };
-            }
+            public Bottun(Func<bool> value) : base(value) { }
 
             public bool GetBottunDown()
             {
-                return (State && !preState);
+                return (Value && !PreValue);
             }
         }
 
-        public class AxisRaw
+        public class AxisRaw : InputTemplate<int>
         {
-            public int Value { get; private set; }
-            private int preValue;
+            public AxisRaw(Func<int> value) : base(value) { }
 
-            public AxisRaw(InputVive parent, Func<int> update)
+            public bool ChangeNZ()
             {
-                parent.updateCallback += () =>
-                {
-                    preValue = Value;
-                    Value = update();
-                };
-            }
-
-            public bool ChangePositive()
-            {
-                return (Value == 1 && preValue != 1);
-            }
-
-            public bool ChangeNegative()
-            {
-                return (Value == -1 && preValue != -1);
+                return (Value != 0 && PreValue == 0);
             }
         }
 
-        public class Position
+        public class Position : InputTemplate<Vector2>
         {
-            public Vector2 Value { get; private set; }
-            private Vector2 preValue;
-
-            public Position(InputVive parent, Func<Vector2> update)
-            {
-                parent.updateCallback += () =>
-                {
-                    preValue = Value;
-                    Value = update();
-                };
-            }
+            public Position(Func<Vector2> value) : base(value) { }
         }
     }
 }
