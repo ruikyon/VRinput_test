@@ -14,6 +14,19 @@ public class UDPReceiver : MonoBehaviour
     public static Action<float, float, float, float> RotCallBack;
     public static Action<float, float, float> AccelCallBack;
 
+    public static bool Connecting
+    {
+        get
+        {
+            if (!instance)
+            {
+                Debug.LogError("instance does not exist");
+                return false;
+            }
+            else return instance.receiving;
+        }
+    }
+
     private static readonly int LOCAL_PORT = 22220;
     private static UdpClient udp;
 
@@ -67,12 +80,12 @@ public class UDPReceiver : MonoBehaviour
                 double qutZ = jsonNode["sensordata"]["quaternion"]["z"].Get<double>();
                 double qutW = jsonNode["sensordata"]["quaternion"]["w"].Get<double>();
 
-                double ax = jsonNode["sensordata"]["accel"]["x"].Get<double>();
-                double ay = jsonNode["sensordata"]["accel"]["y"].Get<double>();
-                double az = jsonNode["sensordata"]["accel"]["z"].Get<double>();
+                //double ax = jsonNode["sensordata"]["accel"]["x"].Get<double>();
+                //double ay = jsonNode["sensordata"]["accel"]["y"].Get<double>();
+                //double az = jsonNode["sensordata"]["accel"]["z"].Get<double>();
 
                 RotCallBack((float)qutX, (float)qutY, (float)qutZ, (float)qutW);
-                AccelCallBack((float)ax, (float)ay, (float)az);
+                //AccelCallBack((float)ax, (float)ay, (float)az);
             }
             catch (SocketException se)
             {

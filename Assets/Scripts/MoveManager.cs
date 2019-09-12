@@ -12,7 +12,7 @@ public class MoveManager : MonoBehaviour
     private Vector3 ang;
     private Vector3 prePosi;
 
-    private readonly float minAng = 10, maxAng = 30;
+    private readonly float minAng = 20, maxAng = 40;
 
     public bool moving = true;
 
@@ -28,12 +28,23 @@ public class MoveManager : MonoBehaviour
         UDPReceiver.UDPStart();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (!moving) return;
+        //Debug.Log("player vel: "+ player.GetComponent<Rigidbody>().velocity);
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (!moving)
+        {
+            Debug.Log("disconnected");
+            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            return;
+        }
 
         box.eulerAngles = ang;//回転情報のチェック用
+        //Debug.Log(ang);
 
         //Rig移動
         hmd_rig.position += player.position - prePosi;
@@ -47,11 +58,26 @@ public class MoveManager : MonoBehaviour
         player.eulerAngles = ang.y * Vector3.up;
 
         //速度制御
-        var dx = AngToSpeed(ang.z);
+        if (ang.x > 180) ang.x -= 360;
+        var dx = AngToSpeed(ang.z - 180);
         var dz = AngToSpeed(ang.x);
-        var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
-        player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg, Vector3.up) * player.forward);
+        Debug.Log(dz+", "+dx);
+        if (dx == 0 && dz == 0)
+        {
+            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+        else
+        {
+            //var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
+            //Debug.Log("deg: "+deg);
+       
+            var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
+            int offset = 90;
 
+            if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
+
+            player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg+offset, Vector3.up) * player.forward);
+        }
         prePosi = player.position;
     }
 
