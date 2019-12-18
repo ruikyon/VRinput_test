@@ -45,7 +45,7 @@
       "type": "boolean"
     },
     {
-      "name": "/actions/default/in/TrackPosi",
+      "name": "/actions/default/in/trackposi",
       "type": "vector2"
     },
     {

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
+
 
 public class MoveManager : MonoBehaviour
 {
@@ -14,7 +16,10 @@ public class MoveManager : MonoBehaviour
 
     private readonly float minAng = 20, maxAng = 40;
 
-    public bool moving = true;
+    public bool moving = true, vive;
+
+    private readonly SteamVR_Action_Boolean trackBottun = SteamVR_Actions._default.Teleport;
+    private readonly SteamVR_Action_Vector2 track = SteamVR_Actions._default.trackposi;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +41,22 @@ public class MoveManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (vive) 
+        {
+            var moveFlag = trackBottun.GetState(SteamVR_Input_Sources.RightHand);
+            var dirVal = track.GetAxis(SteamVR_Input_Sources.LeftHand).x;
+            if (moveFlag)
+            {
+                ang.x = 90;
+            }
+            else 
+            {
+                ang.x = 0;
+            }
+            if(trackBottun.GetState(SteamVR_Input_Sources.LeftHand))
+                ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal)*2.5f;
+        }
+
         if (!moving)
         {
             Debug.Log("disconnected");
@@ -62,7 +83,7 @@ public class MoveManager : MonoBehaviour
         var dx = AngToSpeed(ang.z - 180);
         var dz = AngToSpeed(ang.x);
         Debug.Log(dz+", "+dx);
-        if (dx == 0 && dz == 0)
+        if (dz == 0)
         {
             player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
@@ -70,13 +91,13 @@ public class MoveManager : MonoBehaviour
         {
             //var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
             //Debug.Log("deg: "+deg);
-       
+
             var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
             int offset = 90;
 
             if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
 
-            player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg+offset, Vector3.up) * player.forward);
+            player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
         }
         prePosi = player.position;
     }
@@ -119,4 +140,9 @@ public class MoveManager : MonoBehaviour
     //     transform.forward = dir;
     //     dirOffset = Controller.AccelData().x - transform.eulerAngles.y;
     // }
+
+    public void SetAng(Vector3 value) 
+    {
+        ang = value;
+    }
 }

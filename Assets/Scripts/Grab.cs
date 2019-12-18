@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class Grab : MonoBehaviour
 {
+    private readonly SteamVR_Action_Boolean trigger = SteamVR_Actions._default.InteractUI;
+
     private bool flag;
     // Start is called before the first frame update
     void Start()
@@ -14,7 +17,8 @@ public class Grab : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(flag && InputVive.right.trigger.GetBottunDown())
+        Debug.Log(flag+","+ trigger.GetState(SteamVR_Input_Sources.RightHand));
+        if(flag && trigger.GetState(SteamVR_Input_Sources.RightHand))
         {
             TaskManager.Instance.NextTask();
         }
@@ -22,7 +26,8 @@ public class Grab : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<TargetObject>()!=null)
+        Debug.Log(other.tag);
+        if (other.tag == "TargetObject")
         {
             flag = true;
         }

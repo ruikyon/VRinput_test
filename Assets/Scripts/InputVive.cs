@@ -15,13 +15,14 @@ public class InputVive : MonoBehaviour
     private readonly SteamVR_Action_Boolean menu = SteamVR_Actions._default.Menu;
     private readonly SteamVR_Action_Boolean trigger = SteamVR_Actions._default.InteractUI;
     private readonly SteamVR_Action_Boolean trackBottun = SteamVR_Actions._default.Teleport;
-    private readonly SteamVR_Action_Vector2 track = SteamVR_Actions._default.TrackPosi;
+    private readonly SteamVR_Action_Vector2 track = SteamVR_Actions._default.trackposi;
     private readonly SteamVR_Action_Vibration haptic = SteamVR_Actions._default.Haptic;
 
     private readonly float border = 0.5f;
 
     private void Start()
     {
+        vr = true;
         if (instance != null)
         {
             Debug.LogError("instance already exists.");

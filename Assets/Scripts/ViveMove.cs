@@ -10,7 +10,7 @@ public class ViveMove : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        flag = false;
+        flag = true;
     }
 
     // Update is called once per frame
@@ -18,9 +18,11 @@ public class ViveMove : MonoBehaviour
     {
         if (!flag) return;
         var move = InputVive.left.trackpad.Value;
-        rb.velocity = move ? Vector3.forward : Vector3.zero;
+        //rb.velocity = move ? Vector3.forward : Vector3.zero;
 
         var dir = InputVive.left.horizontal.Value;
-        
+        if (move)
+            Debug.Log("move; true");
+
     }
 }
