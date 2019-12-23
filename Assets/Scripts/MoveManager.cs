@@ -43,7 +43,7 @@ public class MoveManager : MonoBehaviour
             var forward = hmd_cam.forward;
             forward.y = 0;
             player.forward = forward;
-            dirOffset = ang.y;
+            dirOffset = ang.y - player.eulerAngles.y;
         }
     }
 
@@ -62,8 +62,16 @@ public class MoveManager : MonoBehaviour
             {
                 ang.x = 0;
             }
+
+            //回転処理
+            //プレイヤーだけでなくてカメラも回す必要あり
             if(trackBottun.GetState(SteamVR_Input_Sources.LeftHand))
                 ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal)*2.5f;
+            var pivot = hmd_rig.parent;
+            var pre = hmd_rig.position;
+            pivot.position = player.position;
+            hmd_rig.position = pre;
+            pivot.Rotate(0, (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 2.5f, 0);
         }
 
         if (!moving)
