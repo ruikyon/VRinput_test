@@ -13,6 +13,7 @@ public class MoveManager : MonoBehaviour
     private Transform hmd_cam;
     private Vector3 ang;
     private Vector3 prePosi;
+    private float dirOffset = 0;
 
     private readonly float minAng = 20, maxAng = 40;
 
@@ -36,6 +37,14 @@ public class MoveManager : MonoBehaviour
     private void Update()
     {
         //Debug.Log("player vel: "+ player.GetComponent<Rigidbody>().velocity);
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            //正面リセット
+            var forward = hmd_cam.forward;
+            forward.y = 0;
+            player.forward = forward;
+            dirOffset = ang.y;
+        }
     }
 
 
@@ -76,14 +85,14 @@ public class MoveManager : MonoBehaviour
         player.position += temp;
 
         //向き制御
-        player.eulerAngles = ang.y * Vector3.up;
+        player.eulerAngles = (ang.y - dirOffset) * Vector3.up;
 
         //速度制御
         if (ang.x > 180) ang.x -= 360;
         var dx = AngToSpeed(ang.z - 180);
         var dz = AngToSpeed(ang.x);
         Debug.Log(dz+", "+dx);
-        if (dz == 0)
+        if (dz <= 0)
         {
             player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
@@ -92,12 +101,13 @@ public class MoveManager : MonoBehaviour
             //var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
             //Debug.Log("deg: "+deg);
 
-            var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
-            int offset = 90;
+            //var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
+            //int offset = 90;
 
-            if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
+            //if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
 
-            player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
+            //player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
+            player.GetComponent<Rigidbody>().velocity = mvSpeed * player.forward * dz;
         }
         prePosi = player.position;
     }
