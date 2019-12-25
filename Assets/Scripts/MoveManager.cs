@@ -65,13 +65,15 @@ public class MoveManager : MonoBehaviour
 
             //回転処理
             //プレイヤーだけでなくてカメラも回す必要あり
-            if(trackBottun.GetState(SteamVR_Input_Sources.LeftHand))
-                ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal)*2.5f;
-            var pivot = hmd_rig.parent;
-            var pre = hmd_rig.position;
-            pivot.position = player.position;
-            hmd_rig.position = pre;
-            pivot.Rotate(0, (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 2.5f, 0);
+            if (trackBottun.GetState(SteamVR_Input_Sources.LeftHand))
+            {
+                ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 2.5f;
+                var pivot = hmd_rig.parent;
+                var pre = hmd_rig.position;
+                pivot.position = player.position;
+                hmd_rig.position = pre;
+                pivot.Rotate(0, (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 2.5f, 0);
+            }
         }
 
         if (!moving)
@@ -94,12 +96,13 @@ public class MoveManager : MonoBehaviour
 
         //向き制御
         player.eulerAngles = (ang.y - dirOffset) * Vector3.up;
+        //Debug.Log((ang.y - dirOffset));
 
         //速度制御
         if (ang.x > 180) ang.x -= 360;
         var dx = AngToSpeed(ang.z - 180);
         var dz = AngToSpeed(ang.x);
-        Debug.Log(dz+", "+dx);
+        //Debug.Log(dz+", "+dx);
         if (dz <= 0)
         {
             player.GetComponent<Rigidbody>().velocity = Vector3.zero;

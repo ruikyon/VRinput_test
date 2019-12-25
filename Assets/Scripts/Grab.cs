@@ -21,6 +21,7 @@ public class Grab : MonoBehaviour
         if(flag && trigger.GetState(SteamVR_Input_Sources.RightHand))
         {
             TaskManager.Instance.NextTask();
+            flag = false;
         }
     }
 
