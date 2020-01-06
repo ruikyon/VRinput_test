@@ -50,22 +50,23 @@ public class MoveManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        var moveFlag = trackBottun.GetState(SteamVR_Input_Sources.LeftHand);
+        if (moveFlag)
+        {
+            ang.x = -90;
+        }
+        else
+        {
+            ang.x = 0;
+        }
+
         if (vive) 
         {
-            var moveFlag = trackBottun.GetState(SteamVR_Input_Sources.RightHand);
-            var dirVal = track.GetAxis(SteamVR_Input_Sources.LeftHand).x;
-            if (moveFlag)
-            {
-                ang.x = 90;
-            }
-            else 
-            {
-                ang.x = 0;
-            }
+            var dirVal = track.GetAxis(SteamVR_Input_Sources.RightHand).x;
 
             //回転処理
             //プレイヤーだけでなくてカメラも回す必要あり
-            if (trackBottun.GetState(SteamVR_Input_Sources.LeftHand))
+            if (trackBottun.GetState(SteamVR_Input_Sources.RightHand))
             {
                 ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 2.5f;
                 var pivot = hmd_rig.parent;
@@ -103,7 +104,7 @@ public class MoveManager : MonoBehaviour
         var dx = AngToSpeed(ang.z - 180);
         var dz = AngToSpeed(ang.x);
         //Debug.Log(dz+", "+dx);
-        if (dz <= 0)
+        if (dz >= 0)
         {
             player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
@@ -118,7 +119,7 @@ public class MoveManager : MonoBehaviour
             //if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
 
             //player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
-            player.GetComponent<Rigidbody>().velocity = mvSpeed * player.forward * dz;
+            player.GetComponent<Rigidbody>().velocity = -1* mvSpeed * player.forward * dz;
         }
         prePosi = player.position;
     }
