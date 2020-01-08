@@ -14,6 +14,7 @@ public class MoveManager : MonoBehaviour
     private Vector3 ang;
     private Vector3 prePosi;
     private float dirOffset = 0;
+    private Quaternion playerRot;
 
     private readonly float minAng = 20, maxAng = 40;
 
@@ -44,6 +45,10 @@ public class MoveManager : MonoBehaviour
             forward.y = 0;
             player.forward = forward;
             dirOffset = ang.y - player.eulerAngles.y;
+
+            var boxDir = box.forward;
+            boxDir.y = 0;
+            playerRot.SetFromToRotation(boxDir, forward);
         }
     }
 
@@ -51,14 +56,14 @@ public class MoveManager : MonoBehaviour
     private void FixedUpdate()
     {
         var moveFlag = trackBottun.GetState(SteamVR_Input_Sources.LeftHand);
-        if (moveFlag)
-        {
-            ang.x = -90;
-        }
-        else
-        {
-            ang.x = 0;
-        }
+        //if (moveFlag)
+        //{
+        //    ang.x = -90;
+        //}
+        //else
+        //{
+        //    ang.x = 0;
+        //}
 
         if (vive) 
         {
@@ -96,31 +101,37 @@ public class MoveManager : MonoBehaviour
         player.position += temp;
 
         //向き制御
-        player.eulerAngles = (ang.y - dirOffset) * Vector3.up;
+        var tmpDir = box.forward;
+        tmpDir.y = 0;
+        tmpDir = playerRot * tmpDir;
+        player.forward = tmpDir;
+        //player.eulerAngles = (ang.x - dirOffset) * Vector3.up;
         //Debug.Log((ang.y - dirOffset));
 
-        //速度制御
-        if (ang.x > 180) ang.x -= 360;
-        var dx = AngToSpeed(ang.z - 180);
-        var dz = AngToSpeed(ang.x);
-        //Debug.Log(dz+", "+dx);
-        if (dz >= 0)
-        {
-            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        }
-        else
-        {
-            //var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
-            //Debug.Log("deg: "+deg);
+        ////速度制御
+        //if (ang.x > 180) ang.x -= 360;
+        //var dx = AngToSpeed(ang.z - 180);
+        //var dz = AngToSpeed(ang.x);
+        //dz = 1;
+        ////Debug.Log(dz+", "+dx);
+        //if (dz >= 0)
+        //{
+        //    player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        //}
+        //else
+        //{
+        //    //var deg = (dx == 0) ? 0 : Mathf.Atan(dz / dx) * 360 / (2 * Mathf.PI);
+        //    //Debug.Log("deg: "+deg);
 
-            //var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
-            //int offset = 90;
+        //    //var deg = (dx == 0) ? 90 : Mathf.Atan(Mathf.Abs(dz / dx)) * 360 / (2 * Mathf.PI);
+        //    //int offset = 90;
 
-            //if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
+        //    //if (dx < 0 || (dx == 0 && dz < 0)) offset += 180;
 
-            //player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
-            player.GetComponent<Rigidbody>().velocity = -1* mvSpeed * player.forward * dz;
-        }
+        //    //player.GetComponent<Rigidbody>().velocity = mvSpeed * (Quaternion.AngleAxis(deg + offset, Vector3.up) * player.forward);
+        //    player.GetComponent<Rigidbody>().velocity = -1* mvSpeed * player.forward * dz;
+        //}
+        player.GetComponent<Rigidbody>().velocity = moveFlag ? mvSpeed * player.forward : Vector3.zero;
         prePosi = player.position;
     }
 
