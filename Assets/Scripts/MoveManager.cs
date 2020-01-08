@@ -7,7 +7,7 @@ using Valve.VR;
 public class MoveManager : MonoBehaviour
 {
     [SerializeField]
-    private float mvSpeed, modelWidth;
+    private float mvSpeed, rotSpeed, modelWidth;
     [SerializeField]
     private Transform player, hmd_rig, box;
     private Transform hmd_cam;
@@ -73,12 +73,12 @@ public class MoveManager : MonoBehaviour
             //プレイヤーだけでなくてカメラも回す必要あり
             if (trackBottun.GetState(SteamVR_Input_Sources.RightHand))
             {
-                ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 0.8f;
+                ang.y += (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * rotSpeed;
                 var pivot = hmd_rig.parent;
                 var pre = hmd_rig.position;
                 pivot.position = player.position;
                 hmd_rig.position = pre;
-                pivot.Rotate(0, (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * 0.8f, 0);
+                pivot.Rotate(0, (Mathf.Abs(dirVal) < 0.5f) ? 0 : Mathf.Sign(dirVal) * rotSpeed, 0);
             }
         }
 
