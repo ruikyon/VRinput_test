@@ -17,7 +17,7 @@ public class Grab : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(flag+","+ trigger.GetState(SteamVR_Input_Sources.RightHand));
+        //Debug.Log(flag+","+ trigger.GetState(SteamVR_Input_Sources.RightHand));
         if(flag && trigger.GetState(SteamVR_Input_Sources.RightHand))
         {
             TaskManager.Instance.NextTask();
@@ -27,7 +27,7 @@ public class Grab : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.tag);
+        //Debug.Log(other.tag);
         if (other.tag == "TargetObject")
         {
             flag = true;

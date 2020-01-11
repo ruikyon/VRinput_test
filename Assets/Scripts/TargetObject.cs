@@ -18,7 +18,6 @@ public class TargetObject : MonoBehaviour
     void Update()
     {
         if (!flag) return;
-
         transform.RotateAround(basePos, Vector3.up, 180 * Time.deltaTime);
     }
 
@@ -28,6 +27,5 @@ public class TargetObject : MonoBehaviour
         GetComponent<Collider>().enabled = true;
         transform.position += Vector3.forward * 1;
         flag = true;
-
     }
 }

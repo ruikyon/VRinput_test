@@ -6,6 +6,7 @@ using System;
 
 public class TaskManager : MonoBehaviour
 {
+    [SerializeField] private MoveManager mm;
     [SerializeField]
     private TargetObject[] targets;
     private int taskCount;
@@ -47,7 +48,7 @@ public class TaskManager : MonoBehaviour
         end = Time.time;
         Debug.Log("result time: " + (end - start));
         Debug.Log("-task end-");
-        File.AppendAllText("result.txt", DateTime.Now.ToString() + ": " + (end - start) + Environment.NewLine);
+        File.AppendAllText("result.txt", DateTime.Now.ToString() + "(" + mm.vive + "): " + (end - start) + Environment.NewLine);
     }
 
     public void NextTask()
