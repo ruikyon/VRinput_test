@@ -5,7 +5,7 @@ using System;
 
 public class InputTemplate<T>
 {
-    private Func<T> _value;
+    private readonly Func<T> _value;
     public T Value
     {
         get
@@ -13,7 +13,7 @@ public class InputTemplate<T>
             return _value();
         }
     }
-
+    
     private T preValue;
     protected T PreValue
     {
@@ -22,7 +22,7 @@ public class InputTemplate<T>
             if (InputVive.LastUpdate == Time.frameCount)
             {
                 Debug.LogError("access after update");
-                return default(T);
+                return default;
             }
 
             return preValue;
@@ -42,5 +42,4 @@ public class InputTemplate<T>
             preValue = Value;
         });
     }
-
 }

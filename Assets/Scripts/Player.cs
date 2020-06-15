@@ -47,60 +47,45 @@ public class Player : MonoBehaviour
         //animator = GetComponent<Animator>();
         //rb = GetComponent<Rigidbody>();
         //actionList = new List<IActionable>[kindOfAction];        
-        //luRate = 1.1f;
+        //luRate = 1.1f;s
     }
 
     
 
-    void FixedUpdate()
-    {
-        if (acting)
-        { 
-            rb.velocity = Vector3.zero;
-            animator.SetBool("Running", false);
-            return;
-        }
-        Move();
-    }
+    //private void FixedUpdate()
+    //{
+    //    var data = Controller.AccelData();
+    //    var move = !(data.x < 0);
 
-    protected void Move()
-    {
-        var data = Controller.AccelData();
-        var move = !(data.x < 0);
-
-        if (preMove != move)
-        {
-            mvCool = true;
-            Scheduler.AddEvent(() => mvCool = false, 0.8f);
-        }
-        preMove = move;
+    //    //if (preMove != move)
+    //    //{
+    //    //    mvCool = true;
+    //    //    Scheduler.AddEvent(() => mvCool = false, 0.8f);
+    //    //}
+    //    //preMove = move;
 
 
-        if (move == true && !listening)
-        {
-            var dir = Quaternion.AngleAxis(data.x, Vector3.up) * transform.forward;
-            rb.velocity = dir * moveSpeed * (Controller.StateLT() ? 0.5f : 1);
-            animator.SetBool("Running", true);
-        }
-        else
-        {
-            rb.velocity = Vector3.zero;
-            animator.SetBool("Running", false);
-        }
+    //    if (move && !listening)
+    //    {
+    //        var dir = Quaternion.AngleAxis(data.x, Vector3.up) * transform.forward;
+    //        rb.velocity = dir * moveSpeed * (Controller.StateLT() ? 0.5f : 1);
+    //        animator.SetBool("Running", true);
+    //    }
+    //    else
+    //    {
+    //        rb.velocity = Vector3.zero;
+    //        animator.SetBool("Running", false);
+    //    }
 
-        transform.eulerAngles = Vector3.up * (data.y - dirOffset);
-        pivot.eulerAngles = Vector3.zero;
-    }
+    //    transform.eulerAngles = Vector3.up * (data.y - dirOffset);
+    //    //pivot.eulerAngles = Vector3.zero;
+    //}
 
-  
-
-    
-
-    public void ResetRot()
-    {
-        var dir = userCamera.mycamera.transform.forward;
-        dir.y = 0;
-        transform.forward = dir;
-        dirOffset = Controller.AccelData().x - transform.eulerAngles.y;
-    }
+    //public void ResetRot()
+    //{
+    //    var dir = userCamera.mycamera.transform.forward;
+    //    dir.y = 0;
+    //    transform.forward = dir;
+    //    dirOffset = Controller.AccelData().x - transform.eulerAngles.y;
+    //}
 }

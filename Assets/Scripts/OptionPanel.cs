@@ -17,7 +17,7 @@ public class OptionPanel : Menu
                 manager.Confirm("Do: Width Reset\n", uc.WidthReset);
                 break;
             case 2:
-                manager.Confirm("Do: Rot Reset", Player.instance.ResetRot);
+                //manager.Confirm("Do: Rot Reset", Player.instance.ResetRot);
                 break;
             default:
                 break;
